@@ -1,0 +1,32 @@
+package com.example.CoronaVirus.controllers;
+
+import com.example.CoronaVirus.models.Locationstats;
+import com.example.CoronaVirus.services.CoronaVirusesDataService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Arrays;
+import java.util.List;
+
+
+@Controller
+public class HomeController {
+
+    @Autowired
+    CoronaVirusesDataService coronaVirusesDataService;
+    @GetMapping("/")
+    public String home(Model model){
+        List<Locationstats> allStats = coronaVirusesDataService.getAllStats();
+        int totalReportedCases = allStats.stream().mapToInt(stat->stat.getLatestTotalCases()).sum();
+        int totalNewCases = allStats.stream().mapToInt(stat->stat.getDiffFromPrevDay()).sum();
+        model.addAttribute("Locationstats",allStats);
+        model.addAttribute("totalReportedCases",totalReportedCases);
+        model.addAttribute("totalNewCases",totalNewCases);
+
+
+        return "home";
+    }
+
+}
